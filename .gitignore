@@ -30,3 +30,7 @@ override.tf.json
 
 .idea
 **/aebi_playground_Ic5f5KtV-openrc.sh
+**/key.json
+**/generated/
+**/cdktf.out/
+**/.terraform.lock.hcl
