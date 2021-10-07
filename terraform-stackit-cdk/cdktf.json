@@ -1,0 +1,16 @@
+{
+  "language": "go",
+  "app": "go run main.go",
+  "codeMakerOutput": "generated",
+  "terraformProviders": [
+    "terraform-provider-openstack/openstack@~> 1.44.0",
+    "hashicorp/local@~> 2.1.0",
+    "hashicorp/cloudinit@~> 2.2.0"
+  ],
+  "terraformModules": [],
+  "context": {
+    "excludeStackIdFromLogicalIds": "true",
+    "allowSepCharsInLogicalIds": "true"
+  },
+  "projectId": "6fe350a5-19d1-4058-9c40-39210ae00643"
+}
