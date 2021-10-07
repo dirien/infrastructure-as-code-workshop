@@ -1,3 +1,28 @@
+# Terraform STACKIT
+
+
+## Preinstall
+```bash
+brew tap hashicorp/tap
+brew install hashicorp/tap/terraform
+brew install golang
+brew install cdktf
+```
+
+## Getting started
+```bash
+go build
+cdktf get
+cdktf synth
+
+# ! create the credentials from **public** web project on STACKIT
+# ! source **OpenStack RC** config file  
+
+cdktf deploy
+```
+
+
+## More about the commands
 
 Your cdktf go project is ready!
 
