@@ -1,0 +1,9 @@
+config:
+  pulumi-kubernetes-operator:armClientID:
+    secure: <changeme>
+  pulumi-kubernetes-operator:armClientSecret:
+    secure: <changeme>
+  pulumi-kubernetes-operator:armSubscriptionID: <changeme>
+  pulumi-kubernetes-operator:armTenantID: <changeme>
+  pulumi-kubernetes-operator:pulumiAccessToken:
+    secure: <changeme>
