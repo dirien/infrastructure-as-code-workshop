@@ -1,9 +1,9 @@
 config:
   pulumi-kubernetes-operator:armClientID:
-    secure: <changeme>
+    secure: AAABAIZKPX1iPi8ACIT4zkMgD3xHBLu6IXrDUhUXRvYKb+ulI8jgJdqp+jc/okcZyjtvS+LlE7VxqRLFmaYmKfS+iRA=
   pulumi-kubernetes-operator:armClientSecret:
-    secure: <changeme>
-  pulumi-kubernetes-operator:armSubscriptionID: <changeme>
-  pulumi-kubernetes-operator:armTenantID: <changeme>
+    secure: AAABAIROyVSO8yFcMB47UVr8/sfoSsTcBIvr5U+D+eEc6KwB+C3Y65Rx9P8uPmfbd0SGMr8e7nrwwbdFyDLXi78B
+  pulumi-kubernetes-operator:armSubscriptionID: d62eb9ef-fe7c-45f5-8bd6-7b2b727869c4
+  pulumi-kubernetes-operator:armTenantID: 3bb336c2-6605-4144-aa4b-b04b79bef215
   pulumi-kubernetes-operator:pulumiAccessToken:
-    secure: <changeme>
+    secure: AAABAETCsfrCWxfkuPVEQCVyo0W2MArgkVQDn4qCL/eFrVDVFm+No36bg8h6Mp0bo9VZKamFVSVZpBYjSTJOZjAJQsLRz7ilCOZrWA==
