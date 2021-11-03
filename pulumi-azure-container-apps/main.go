@@ -1,11 +1,10 @@
 package main
 
 import (
-	"github.com/pulumi/pulumi-azure-native/sdk/go/azure/containerregistry"
+	"fmt"
 	"github.com/pulumi/pulumi-azure-native/sdk/go/azure/operationalinsights"
 	"github.com/pulumi/pulumi-azure-native/sdk/go/azure/resources"
-	"github.com/pulumi/pulumi-azure-native/sdk/go/azure/web"
-	"github.com/pulumi/pulumi-docker/sdk/v3/go/docker"
+	web "github.com/pulumi/pulumi-azure-native/sdk/go/azure/web/v20210301"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
@@ -13,6 +12,69 @@ const (
 	resourceGroupName = "container-app-demo"
 	workspaceName     = "workspace"
 )
+
+type podtatoPart struct {
+	name    string
+	version string
+	traffic web.TrafficWeightArray
+}
+
+var podParts = []podtatoPart{
+	{
+		"podtato-hats",
+		"v4",
+		web.TrafficWeightArray{
+			/*web.TrafficWeightArgs{
+				RevisionName: pulumi.String("podtato-hats--d2kna50"),
+				Weight:       pulumi.IntPtr(50),
+			}*/
+			web.TrafficWeightArgs{
+				LatestRevision: pulumi.BoolPtr(true),
+				Weight:         pulumi.IntPtr(100),
+			},
+		},
+	},
+	{
+		"podtato-left-leg",
+		"v1",
+		web.TrafficWeightArray{
+			web.TrafficWeightArgs{
+				LatestRevision: pulumi.BoolPtr(true),
+				Weight:         pulumi.IntPtr(100),
+			},
+		},
+	},
+	{
+		"podtato-left-arm",
+		"v2",
+		web.TrafficWeightArray{
+			web.TrafficWeightArgs{
+				LatestRevision: pulumi.BoolPtr(true),
+				Weight:         pulumi.IntPtr(100),
+			},
+		},
+	},
+	{
+		"podtato-right-leg",
+		"v1",
+		web.TrafficWeightArray{
+			web.TrafficWeightArgs{
+				LatestRevision: pulumi.BoolPtr(true),
+				Weight:         pulumi.IntPtr(100),
+			},
+		},
+	},
+	{
+		"podtato-right-arm",
+		"v3",
+		web.TrafficWeightArray{
+			web.TrafficWeightArgs{
+				LatestRevision: pulumi.BoolPtr(true),
+				Weight:         pulumi.IntPtr(100),
+			},
+		},
+	},
+}
 
 func main() {
 	pulumi.Run(func(ctx *pulumi.Context) error {
@@ -25,28 +87,37 @@ func main() {
 			Sku: operationalinsights.WorkspaceSkuArgs{
 				Name: pulumi.String("PerGB2018"),
 			},
-		}, pulumi.DependsOn([]pulumi.Resource{resourceGroup}))
-		if err != nil {
-			return err
-		}
-
-		sharedKeys, err := operationalinsights.GetSharedKeys(ctx, &operationalinsights.GetSharedKeysArgs{
-			ResourceGroupName: resourceGroupName,
-			WorkspaceName:     workspaceName,
 		})
 		if err != nil {
 			return err
 		}
 
+		sharedKeys := pulumi.All(resourceGroup.Name, workspace.Name).ApplyT(
+			func(args []interface{}) (string, error) {
+				resourceGroupName := args[0].(string)
+				workspaceName := args[1].(string)
+				accountKeys, err := operationalinsights.GetSharedKeys(ctx, &operationalinsights.GetSharedKeysArgs{
+					ResourceGroupName: resourceGroupName,
+					WorkspaceName:     workspaceName,
+				})
+				if err != nil {
+					return "", err
+				}
+
+				return *accountKeys.PrimarySharedKey, nil
+			},
+		).(pulumi.StringOutput)
+
 		kubeEnvironment, err := web.NewKubeEnvironment(ctx, "kubeEnvironment", &web.KubeEnvironmentArgs{
 			ResourceGroupName:           resourceGroup.Name,
 			Name:                        pulumi.String("kubeEnvironment"),
+			Type:                        pulumi.String("managed"),
 			InternalLoadBalancerEnabled: pulumi.Bool(false),
 			AppLogsConfiguration: web.AppLogsConfigurationArgs{
 				Destination: pulumi.String("log-analytics"),
 				LogAnalyticsConfiguration: web.LogAnalyticsConfigurationArgs{
 					CustomerId: workspace.CustomerId,
-					SharedKey:  pulumi.StringPtr(*sharedKeys.PrimarySharedKey),
+					SharedKey:  sharedKeys,
 				},
 			},
 		})
@@ -54,73 +125,98 @@ func main() {
 			return err
 		}
 
-		registry, err := containerregistry.NewRegistry(ctx, "registry", &containerregistry.RegistryArgs{
-			ResourceGroupName: resourceGroup.Name,
-			Sku: containerregistry.SkuArgs{
-				Name: pulumi.String("Basic"),
-			},
-			AdminUserEnabled: pulumi.Bool(true),
-		})
-		if err != nil {
-			return err
-		}
-		registryCredentials, err := containerregistry.ListRegistryCredentials(ctx, &containerregistry.ListRegistryCredentialsArgs{
-			ResourceGroupName: resourceGroupName,
-			RegistryName:      "registry",
-		})
-		if err != nil {
-			return err
-		}
-		newImage, err := docker.NewImage(ctx, "image", &docker.ImageArgs{
-			ImageName: pulumi.Sprintf("%s/app:v1.0.0", registry.LoginServer),
-			Build: docker.DockerBuildArgs{
-				Context: pulumi.String("/app"),
-			},
-			Registry: docker.ImageRegistryArgs{
-				Server:   registry.LoginServer,
-				Username: pulumi.Sprintf("%s", registryCredentials.Username),
-				Password: pulumi.Sprintf("%s", registryCredentials.Passwords[0].Name),
-			},
-		})
-		if err != nil {
-			return err
+		for _, part := range podParts {
+			podtatoHeadPart, err := web.NewContainerApp(ctx, part.name, &web.ContainerAppArgs{
+				ResourceGroupName: resourceGroup.Name,
+				Name:              pulumi.String(part.name),
+				KubeEnvironmentId: kubeEnvironment.ID(),
+				Configuration: web.ConfigurationArgs{
+					ActiveRevisionsMode: pulumi.String("multiple"),
+					Ingress: web.IngressArgs{
+						External:   pulumi.Bool(false),
+						TargetPort: pulumi.IntPtr(9000),
+						Traffic:    part.traffic,
+					},
+				},
+				Template: web.TemplateArgs{
+					Containers: web.ContainerArray{
+						web.ContainerArgs{
+							Name:  pulumi.String(part.name),
+							Image: pulumi.String(fmt.Sprintf("dirien/%s:%s", part.name, part.version)),
+						},
+					},
+					Scale: web.ScaleArgs{
+						MaxReplicas: pulumi.IntPtr(5),
+						MinReplicas: pulumi.IntPtr(0),
+						Rules: web.ScaleRuleArray{
+							web.ScaleRuleArgs{
+								Name: pulumi.String("http-rule"),
+								Http: web.HttpScaleRuleArgs{
+									Metadata: pulumi.StringMap{
+										"concurrentRequests": pulumi.String("20"),
+									},
+								},
+							},
+						},
+					},
+					Dapr: web.DaprArgs{
+						Enabled: pulumi.BoolPtr(true),
+						AppId:   pulumi.String(part.name),
+						AppPort: pulumi.IntPtr(9000),
+					},
+				},
+			})
+			if err != nil {
+				return err
+			}
+			ctx.Export(fmt.Sprintf("%s_LatestRevisionName", part.name), podtatoHeadPart.LatestRevisionName)
 		}
 
-		containerApp, err := web.NewContainerApp(ctx, "app", &web.ContainerAppArgs{
+		mainApp, err := web.NewContainerApp(ctx, "podtato-main", &web.ContainerAppArgs{
 			ResourceGroupName: resourceGroup.Name,
+			Name:              pulumi.String("podtato-main"),
 			KubeEnvironmentId: kubeEnvironment.ID(),
 			Configuration: web.ConfigurationArgs{
 				Ingress: web.IngressArgs{
 					External:   pulumi.Bool(true),
-					TargetPort: pulumi.IntPtr(80),
-				},
-				Registries: web.RegistryCredentialsArray{
-					web.RegistryCredentialsArgs{
-						Server:            registry.LoginServer,
-						Username:          pulumi.Sprintf("%s", registryCredentials.Username),
-						PasswordSecretRef: pulumi.String("pwd")},
-				},
-				Secrets: web.SecretArray{
-					web.SecretArgs{
-						Name:  pulumi.String("pwd"),
-						Value: pulumi.Sprintf("%s", registryCredentials.Passwords[0].Name),
-					},
+					TargetPort: pulumi.IntPtr(9000),
 				},
 			},
 			Template: web.TemplateArgs{
 				Containers: web.ContainerArray{
 					web.ContainerArgs{
-						Name:  pulumi.String("myapp"),
-						Image: newImage.ImageName,
+						Name:  pulumi.String("podtato-main"),
+						Image: pulumi.String("dirien/podtato-main:v1@sha256:671a7776e448cdf5de5b01a44812d29137a9e6f9267be1fc919b2d59f69040e7"),
 					},
+				},
+				Scale: web.ScaleArgs{
+					MaxReplicas: pulumi.IntPtr(5),
+					MinReplicas: pulumi.IntPtr(0),
+					Rules: web.ScaleRuleArray{
+						web.ScaleRuleArgs{
+							Name: pulumi.String("http-rule"),
+							Http: web.HttpScaleRuleArgs{
+								Metadata: pulumi.StringMap{
+									"concurrentRequests": pulumi.String("20"),
+								},
+							},
+						},
+					},
+				},
+				Dapr: web.DaprArgs{
+					Enabled: pulumi.BoolPtr(true),
+					AppId:   pulumi.String("podtato-main"),
+					AppPort: pulumi.IntPtr(9000),
 				},
 			},
 		})
+
 		if err != nil {
 			return err
 		}
 
-		ctx.Export("url", pulumi.Sprintf("https:/%s", containerApp.LatestRevisionFqdn))
+		ctx.Export("LatestRevisionFqdn", pulumi.Sprintf("https:/%s", mainApp.LatestRevisionFqdn))
+		ctx.Export("LatestRevisionName", mainApp.LatestRevisionName)
 
 		return nil
 	})
