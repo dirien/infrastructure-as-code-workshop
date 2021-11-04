@@ -4,12 +4,10 @@ go 1.17
 
 require (
 	github.com/pulumi/pulumi-azure-native/sdk v1.44.0
-	github.com/pulumi/pulumi-docker/sdk/v3 v3.1.0
 	github.com/pulumi/pulumi/sdk/v3 v3.16.0
 )
 
 require (
-	github.com/Masterminds/semver v1.5.0 // indirect
 	github.com/blang/semver v3.5.1+incompatible // indirect
 	github.com/cheggaaa/pb v1.0.18 // indirect
 	github.com/djherbis/times v1.2.0 // indirect
