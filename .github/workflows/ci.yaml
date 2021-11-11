@@ -8,6 +8,9 @@ on:
       - '*'
   pull_request:
 
+env:
+  AZURE_RESOURCEGROUP_NAME: minecraft-rg
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -19,3 +22,8 @@ jobs:
       - uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - uses: azure/arm-deploy@v1
+        with:
+          deploymentName: ${{ github.run_number }}
+          resourceGroupName: ${{ env.AZURE_RESOURCEGROUP_NAME }}
+          template: ./bicep-azure-minecraft/main.bicep
