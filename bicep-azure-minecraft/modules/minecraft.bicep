@@ -1,32 +1,32 @@
-var addressPrefix = '10.0.0.0/8'
-var subnetAddressPrefix = '10.0.0.0/16'
-
+@description('The Azure region into which the resources should be deployed.')
 param location string = 'westeurope'
 
+@description('The vm size to use for the virtual machine.')
 param vmSize string = 'Standard_D2_v2'
+
+@description('The admin username for the virtual machine.')
 param adminUsername string
+
+@description('The computer name for the virtual machine.')
 param computerName string
+@description('The ssh public key to use for the virtual machine.')
 param sshPublicKey string
+@description('the custom data to use for the virtual machine.')
 param customData string
 
+@description('The virtual network name to use for the resources.')
+param vnetName string
+
 resource nsg 'Microsoft.Network/networkSecurityGroups@2020-06-01' = {
-  name: 'nsg-${uniqueString(resourceGroup().id)}'
+  name: '${computerName}-${uniqueString(resourceGroup().id)}-nsg'
   location: location
+  tags: {
+    'app': 'minecraft'
+    'name': computerName
+    'resources': 'nsg'
+  }
   properties: {
     securityRules: [
-      {
-        name: 'SSH'
-        properties: {
-          priority: 1000
-          protocol: 'Tcp'
-          access: 'Allow'
-          direction: 'Inbound'
-          sourceAddressPrefix: '*'
-          sourcePortRange: '*'
-          destinationAddressPrefix: '*'
-          destinationPortRange: '22'
-        }
-      }
       {
         name: 'minecraft'
         properties: {
@@ -45,8 +45,13 @@ resource nsg 'Microsoft.Network/networkSecurityGroups@2020-06-01' = {
 }
 
 resource publicIP 'Microsoft.Network/publicIPAddresses@2021-03-01' = {
-  name: 'pup-${uniqueString(resourceGroup().id)}'
+  name: '${computerName}-${uniqueString(resourceGroup().id)}-pip'
   location: location
+  tags: {
+    'app': 'minecraft'
+    'name': computerName
+    'resources': 'publicIP'
+  }
   properties: {
     publicIPAllocationMethod: 'Static'
     publicIPAddressVersion: 'IPv4'
@@ -58,29 +63,18 @@ resource publicIP 'Microsoft.Network/publicIPAddresses@2021-03-01' = {
 
 output minecraftPublicIP string = publicIP.properties.ipAddress
 
-resource vnet 'Microsoft.Network/virtualNetworks@2021-03-01' = {
-  name: 'vnet-${uniqueString(resourceGroup().id)}'
-  location: location
-  properties: {
-    addressSpace: {
-      addressPrefixes: [
-        addressPrefix
-      ]
-    }
-    subnets: [
-      {
-        name: 'subnet-${uniqueString(resourceGroup().id)}'
-        properties: {
-          addressPrefix: subnetAddressPrefix
-        }
-      }
-    ]
-  }
+resource vnet 'Microsoft.Network/virtualNetworks@2021-03-01' existing = {
+  name: vnetName
 }
 
 resource nic 'Microsoft.Network/networkInterfaces@2021-03-01' = {
-  name: 'nic-${uniqueString(resourceGroup().id)}'
+  name: '${computerName}-${uniqueString(resourceGroup().id)}-nic'
   location: location
+  tags: {
+    'app': 'minecraft'
+    'name': computerName
+    'resources': 'nic'
+  }
   properties: {
     ipConfigurations: [
       {
@@ -103,8 +97,14 @@ resource nic 'Microsoft.Network/networkInterfaces@2021-03-01' = {
 }
 
 resource vm 'Microsoft.Compute/virtualMachines@2021-07-01' = {
-  name: 'minecraft-${uniqueString(resourceGroup().id)}'
+  name: '${computerName}-${uniqueString(resourceGroup().id)}-vm'
   location: location
+  tags: {
+    'app': 'minecraft'
+    'name': computerName
+    'vmSize': vmSize
+    'resources': 'virtualMachine'
+  }
   properties: {
     hardwareProfile: {
       vmSize: vmSize
@@ -112,7 +112,7 @@ resource vm 'Microsoft.Compute/virtualMachines@2021-07-01' = {
     storageProfile: {
       osDisk: {
         createOption: 'FromImage'
-        name: 'osdisk-${uniqueString(resourceGroup().id)}'
+        name: '${computerName}-${uniqueString(resourceGroup().id)}-disk'
         diskSizeGB: 30
       }
       imageReference: {
@@ -137,6 +137,9 @@ resource vm 'Microsoft.Compute/virtualMachines@2021-07-01' = {
       adminUsername: adminUsername
       customData: customData
       linuxConfiguration: {
+        patchSettings: {
+          patchMode: 'AutomaticByPlatform'
+        }
         ssh: {
           publicKeys: [
             {
@@ -149,5 +152,3 @@ resource vm 'Microsoft.Compute/virtualMachines@2021-07-01' = {
     }
   }
 }
-
-output sshCommand string = 'ssh -i <sshkey> ${adminUsername}@${publicIP.properties.ipAddress}'

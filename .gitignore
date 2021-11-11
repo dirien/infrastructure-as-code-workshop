@@ -34,3 +34,4 @@ override.tf.json
 **/generated/
 **/cdktf.out/
 **/.terraform.lock.hcl
+**/azure.json
