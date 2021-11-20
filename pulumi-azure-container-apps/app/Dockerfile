@@ -1,4 +1,4 @@
-FROM node:8.9.3-alpine
+FROM node:8.17.0-alpine
 RUN mkdir -p /usr/src/app
 COPY ./app/* /usr/src/app/
 WORKDIR /usr/src/app
