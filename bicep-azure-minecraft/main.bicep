@@ -29,7 +29,6 @@ module minecraftBastion 'modules/bastion.bicep' = {
 
 var minecraftServeNames = [
   'minecraft-server-1'
-  'minecraft-server-2'
 ]
 
 module minecraftServer 'modules/minecraft.bicep' = [for name in minecraftServeNames: {
