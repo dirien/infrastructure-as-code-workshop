@@ -25,8 +25,9 @@ jobs:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-      #- uses: azure/arm-deploy@v1
-      #  with:
-      #    deploymentName: ${{ github.run_number }}
-      #    resourceGroupName: ${{ env.AZURE_RESOURCEGROUP_NAME }}
-      #    template: ./bicep-azure-minecraft/main.bicep
+      - name: 'Run az deployment group what-if'
+        run: |
+          cd bicep-azure-minecraft
+          az deployment group what-if --template-file main.bicep --mode Complete \
+          --parameters objectId=1cbd6d17-3682-4175-9ba2-adb7582c3507 \
+          --parameters userId=9ddd81b2-ebc6-498b-95bb-8ec7f57c7558az
