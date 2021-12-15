@@ -89,7 +89,7 @@ runcmd:
   - echo [sshd] | sudo tee -a /etc/fail2ban/jail.local
   - echo enabled = true | sudo tee -a /etc/fail2ban/jail.local
   - sudo systemctl restart fail2ban
-  - URL=$(curl -s https://java-version.minectl.ediri.online/binary/1.17.1)
+  - URL=$(curl -s https://java-version.minectl.ediri.online/binary/1.18.1)
   - curl -sLSf $URL > /minecraft/server.jar
   - echo "eula=true" > /minecraft/eula.txt
   - mv /tmp/server.properties /minecraft/server.properties

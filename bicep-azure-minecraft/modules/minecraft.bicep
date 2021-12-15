@@ -17,7 +17,7 @@ param customData string
 @description('The virtual network name to use for the resources.')
 param vnetName string
 
-resource nsg 'Microsoft.Network/networkSecurityGroups@2020-06-01' = {
+resource nsg 'Microsoft.Network/networkSecurityGroups@2021-03-01' = {
   name: '${computerName}-${uniqueString(resourceGroup().id)}-nsg'
   location: location
   tags: {
