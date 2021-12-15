@@ -31,4 +31,4 @@ jobs:
           az deployment group what-if --template-file main.bicep --mode Complete \
           --parameters objectId=1cbd6d17-3682-4175-9ba2-adb7582c3507 \
           --parameters userId=9ddd81b2-ebc6-498b-95bb-8ec7f57c7558az \
-          --resource-group {{ env.AZURE_RESOURCEGROUP_NAME }}
+          --resource-group ${{ env.AZURE_RESOURCEGROUP_NAME }}
