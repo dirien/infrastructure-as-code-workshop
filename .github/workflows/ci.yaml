@@ -1,12 +1,9 @@
-name: deploy
+name: deploy via OIDC
 
 on:
   push:
     branches:
-      - '*'
-    tags:
-      - '*'
-  pull_request:
+      - 'main'
 
 env:
   AZURE_RESOURCEGROUP_NAME: minecraft-rg
