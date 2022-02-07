@@ -39,7 +39,7 @@ module minecraftServer 'modules/minecraft.bicep' = [for name in minecraftServeNa
     adminUsername: 'minecraft'
     computerName: name
     sshPublicKey: loadTextContent('../ssh/workshop.pub')
-    customData: loadFileAsBase64('../config/cloud-init.yaml')
+    customData: loadFileAsBase64('config/papermc-cloud-init.yaml')
   }
 }]
 
