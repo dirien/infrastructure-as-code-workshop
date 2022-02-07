@@ -8,7 +8,7 @@ resource vnet 'Microsoft.Network/virtualNetworks@2021-03-01' existing = {
   name: vnetName
 }
 
-resource publicIp 'Microsoft.Network/publicIPAddresses@2021-03-01' = {
+resource publicIp 'Microsoft.Network/publicIPAddresses@2021-05-01' = {
   name: 'bastion-${uniqueString(resourceGroup().id)}-pip'
   location: location
   tags: {
@@ -24,7 +24,7 @@ resource publicIp 'Microsoft.Network/publicIPAddresses@2021-03-01' = {
   }
 }
 
-resource bastionHost 'Microsoft.Network/bastionHosts@2021-03-01' = {
+resource bastionHost 'Microsoft.Network/bastionHosts@2021-05-01' = {
   name: 'bastion-${uniqueString(resourceGroup().id)}-bh'
   location: location
   tags: {
