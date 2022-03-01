@@ -3,7 +3,8 @@
     "config:base",
     ":semanticCommits",
     ":semanticCommitTypeAll(chore)",
-    ":gitSignOff"
+    ":gitSignOff",
+    "group:all"
   ],
   "postUpdateOptions": [
     "gomodTidy",
@@ -16,6 +17,7 @@
   "packageRules": [
     {
       "matchUpdateTypes": [
+        "major",
         "minor",
         "patch",
         "pin",
