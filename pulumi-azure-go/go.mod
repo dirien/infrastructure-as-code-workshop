@@ -3,7 +3,7 @@ module pulumi-azure-go
 go 1.17
 
 require (
-	github.com/pulumi/pulumi-azure-native/sdk v1.61.0
+	github.com/pulumi/pulumi-azure-native/sdk v1.62.0
 	github.com/pulumi/pulumi/sdk/v3 v3.28.0
 )
 
