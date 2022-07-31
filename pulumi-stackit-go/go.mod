@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/pulumi/pulumi-openstack/sdk/v3 v3.8.0
-	github.com/pulumi/pulumi/sdk/v3 v3.36.0
+	github.com/pulumi/pulumi/sdk/v3 v3.37.2
 )
 
 require (
