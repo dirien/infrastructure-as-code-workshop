@@ -1,6 +1,6 @@
 module pulumi-kubernetes-operator
 
-go 1.18
+go 1.19
 
 require (
 	github.com/pulumi/pulumi-kubernetes/sdk/v3 v3.20.2

@@ -1,6 +1,6 @@
 module pulumi-stackit-go
 
-go 1.18
+go 1.19
 
 require (
 	github.com/pulumi/pulumi-openstack/sdk/v3 v3.8.0
