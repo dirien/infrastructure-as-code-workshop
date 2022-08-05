@@ -3,7 +3,7 @@ module pulumi-stackit-go
 go 1.19
 
 require (
-	github.com/pulumi/pulumi-openstack/sdk/v3 v3.8.0
+	github.com/pulumi/pulumi-openstack/sdk/v3 v3.9.0
 	github.com/pulumi/pulumi/sdk/v3 v3.37.2
 )
 
