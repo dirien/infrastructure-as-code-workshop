@@ -3,8 +3,8 @@ module pulumi-azure-container-apps
 go 1.19
 
 require (
-	github.com/pulumi/pulumi-azure-native/sdk v1.80.0
-	github.com/pulumi/pulumi/sdk/v3 v3.42.0
+	github.com/pulumi/pulumi-azure-native/sdk v1.81.0
+	github.com/pulumi/pulumi/sdk/v3 v3.43.1
 )
 
 require (
