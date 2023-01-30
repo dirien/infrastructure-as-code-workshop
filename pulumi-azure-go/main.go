@@ -2,9 +2,9 @@ package main
 
 import (
 	"encoding/base64"
-	"github.com/pulumi/pulumi-azure-native/sdk/go/azure/compute"
-	"github.com/pulumi/pulumi-azure-native/sdk/go/azure/network"
-	"github.com/pulumi/pulumi-azure-native/sdk/go/azure/resources"
+	compute "github.com/pulumi/pulumi-azure-native-sdk/compute/v20220801"
+	network "github.com/pulumi/pulumi-azure-native-sdk/network/v20220701"
+	resources "github.com/pulumi/pulumi-azure-native-sdk/resources/v20220901"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi/config"
 	"io/ioutil"
@@ -45,8 +45,8 @@ func main() {
 		ipAddress, err := network.NewPublicIPAddress(ctx, "minecraft-pubip", &network.PublicIPAddressArgs{
 			Location:                 resourceGroup.Location,
 			ResourceGroupName:        resourceGroup.Name,
-			PublicIPAddressVersion:   network.IPVersionIPv4,
-			PublicIPAllocationMethod: network.IPAllocationMethodStatic,
+			PublicIPAddressVersion:   pulumi.String(network.IPVersionIPv4),
+			PublicIPAllocationMethod: pulumi.String(network.IPAllocationMethodStatic),
 		})
 		if err != nil {
 			return err
@@ -58,7 +58,7 @@ func main() {
 			IpConfigurations: network.NetworkInterfaceIPConfigurationArray{
 				&network.NetworkInterfaceIPConfigurationArgs{
 					Name:                      pulumi.String("internal"),
-					PrivateIPAllocationMethod: network.IPAllocationMethodDynamic,
+					PrivateIPAllocationMethod: pulumi.String(network.IPAllocationMethodDynamic),
 					Subnet: network.SubnetTypeArgs{
 						Id: subnet.ID(),
 					},
@@ -85,7 +85,7 @@ func main() {
 			Location:          resourceGroup.Location,
 			ResourceGroupName: resourceGroup.Name,
 			HardwareProfile: compute.HardwareProfileArgs{
-				VmSize: compute.VirtualMachineSizeTypes("Standard_D2_v2"),
+				VmSize: pulumi.String("Standard_D2_v2"),
 			},
 			StorageProfile: compute.StorageProfileArgs{
 				ImageReference: compute.ImageReferenceArgs{
