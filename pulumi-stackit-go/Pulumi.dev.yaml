@@ -1,4 +1,3 @@
 config:
   pulumi-stackit-go:flavor: c1.3
-  pulumi-stackit-go:image-id: 39454d2e-a20a-42c9-8713-c90e1866ce16
   pulumi-stackit-go:subnet-cidr: 10.1.10.0/24

@@ -1,39 +1,52 @@
 package main
 
 import (
-	"cdk.tf/go/stack/generated/hashicorp/cloudinit"
-	"cdk.tf/go/stack/generated/terraform-provider-openstack/openstack"
 	"fmt"
+	"log"
+	"os"
+
+	"cdk.tf/go/stack/generated/hashicorp/cloudinit/datacloudinitconfig"
+	initProvider "cdk.tf/go/stack/generated/hashicorp/cloudinit/provider"
+	"cdk.tf/go/stack/generated/terraform-provider-openstack/openstack/computefloatingipassociatev2"
+	"cdk.tf/go/stack/generated/terraform-provider-openstack/openstack/computeinstancev2"
+	"cdk.tf/go/stack/generated/terraform-provider-openstack/openstack/computekeypairv2"
+	"cdk.tf/go/stack/generated/terraform-provider-openstack/openstack/dataopenstackimagesimagev2"
+	"cdk.tf/go/stack/generated/terraform-provider-openstack/openstack/networkingfloatingipv2"
+	"cdk.tf/go/stack/generated/terraform-provider-openstack/openstack/networkingnetworkv2"
+	"cdk.tf/go/stack/generated/terraform-provider-openstack/openstack/networkingrouterinterfacev2"
+	"cdk.tf/go/stack/generated/terraform-provider-openstack/openstack/networkingrouterv2"
+	"cdk.tf/go/stack/generated/terraform-provider-openstack/openstack/networkingsecgrouprulev2"
+	"cdk.tf/go/stack/generated/terraform-provider-openstack/openstack/networkingsecgroupv2"
+	"cdk.tf/go/stack/generated/terraform-provider-openstack/openstack/networkingsubnetv2"
+	openstackProvider "cdk.tf/go/stack/generated/terraform-provider-openstack/openstack/provider"
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
 	"github.com/hashicorp/terraform-cdk-go/cdktf"
-	"io/ioutil"
-	"log"
 )
 
 func MinecraftStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 	stack := cdktf.NewTerraformStack(scope, &id)
 
-	pubKeyFile, err := ioutil.ReadFile("../ssh/workshop.pub")
+	pubKeyFile, err := os.ReadFile("../ssh/workshop.pub")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	cloudinit.NewCloudinitProvider(stack, jsii.String("cloudinit-provider"), &cloudinit.CloudinitProviderConfig{})
+	initProvider.NewCloudinitProvider(stack, jsii.String("cloudinit-provider"), &initProvider.CloudinitProviderConfig{})
 
-	openstack.NewOpenstackProvider(stack, jsii.String("openstack-provider"), &openstack.OpenstackProviderConfig{})
+	openstackProvider.NewOpenstackProvider(stack, jsii.String("openstack-provider"), &openstackProvider.OpenstackProviderConfig{})
 
-	keypair := openstack.NewComputeKeypairV2(stack, jsii.String("keypair"), &openstack.ComputeKeypairV2Config{
+	keypair := computekeypairv2.NewComputeKeypairV2(stack, jsii.String("keypair"), &computekeypairv2.ComputeKeypairV2Config{
 		Name:      jsii.String(fmt.Sprintf("%s-kp", id)),
 		PublicKey: jsii.String(string(pubKeyFile)),
 	})
 
-	network := openstack.NewNetworkingNetworkV2(stack, jsii.String("network"), &openstack.NetworkingNetworkV2Config{
+	network := networkingnetworkv2.NewNetworkingNetworkV2(stack, jsii.String("network"), &networkingnetworkv2.NetworkingNetworkV2Config{
 		Name:         jsii.String(fmt.Sprintf("%s-net", id)),
 		AdminStateUp: jsii.Bool(true),
 	})
 
-	subnet := openstack.NewNetworkingSubnetV2(stack, jsii.String("subnet"), &openstack.NetworkingSubnetV2Config{
+	subnet := networkingsubnetv2.NewNetworkingSubnetV2(stack, jsii.String("subnet"), &networkingsubnetv2.NetworkingSubnetV2Config{
 		Name:           jsii.String(fmt.Sprintf("%s-snet", id)),
 		NetworkId:      network.Id(),
 		Cidr:           jsii.String("10.1.10.0/24"),
@@ -41,27 +54,27 @@ func MinecraftStack(scope constructs.Construct, id string) cdktf.TerraformStack 
 		DnsNameservers: jsii.Strings("8.8.8.8", "8.8.4.4"),
 	})
 
-	floating := openstack.NewDataOpenstackNetworkingNetworkV2(stack, jsii.String("floating"), &openstack.DataOpenstackNetworkingNetworkV2Config{
+	floating := networkingnetworkv2.NewNetworkingNetworkV2(stack, jsii.String("floating"), &networkingnetworkv2.NetworkingNetworkV2Config{
 		Name: jsii.String("floating-net"),
 	})
 
-	router := openstack.NewNetworkingRouterV2(stack, jsii.String("router"), &openstack.NetworkingRouterV2Config{
+	router := networkingrouterv2.NewNetworkingRouterV2(stack, jsii.String("router"), &networkingrouterv2.NetworkingRouterV2Config{
 		Name:              jsii.String(fmt.Sprintf("%s-router", id)),
 		AdminStateUp:      jsii.Bool(true),
 		ExternalNetworkId: floating.Id(),
 	})
 
-	openstack.NewNetworkingRouterInterfaceV2(stack, jsii.String("ri"), &openstack.NetworkingRouterInterfaceV2Config{
+	networkingrouterinterfacev2.NewNetworkingRouterInterfaceV2(stack, jsii.String("ri"), &networkingrouterinterfacev2.NetworkingRouterInterfaceV2Config{
 		RouterId: router.Id(),
 		SubnetId: subnet.Id(),
 	})
 
-	secgoup := openstack.NewNetworkingSecgroupV2(stack, jsii.String("sg"), &openstack.NetworkingSecgroupV2Config{
+	secgoup := networkingsecgroupv2.NewNetworkingSecgroupV2(stack, jsii.String("sg"), &networkingsecgroupv2.NetworkingSecgroupV2Config{
 		Name:        jsii.String(fmt.Sprintf("%s-sec", id)),
 		Description: jsii.String("Security group for the Terraform minecraft instances"),
 	})
 
-	openstack.NewNetworkingSecgroupRuleV2(stack, jsii.String("sgr-22"), &openstack.NetworkingSecgroupRuleV2Config{
+	networkingsecgrouprulev2.NewNetworkingSecgroupRuleV2(stack, jsii.String("sgr-22"), &networkingsecgrouprulev2.NetworkingSecgroupRuleV2Config{
 		Direction:       jsii.String("ingress"),
 		Ethertype:       jsii.String("IPv4"),
 		Protocol:        jsii.String("tcp"),
@@ -71,7 +84,7 @@ func MinecraftStack(scope constructs.Construct, id string) cdktf.TerraformStack 
 		SecurityGroupId: secgoup.Id(),
 	})
 
-	openstack.NewNetworkingSecgroupRuleV2(stack, jsii.String("sgr-25565"), &openstack.NetworkingSecgroupRuleV2Config{
+	networkingsecgrouprulev2.NewNetworkingSecgroupRuleV2(stack, jsii.String("sgr-25565"), &networkingsecgrouprulev2.NetworkingSecgroupRuleV2Config{
 		Direction:       jsii.String("ingress"),
 		Ethertype:       jsii.String("IPv4"),
 		Protocol:        jsii.String("tcp"),
@@ -81,22 +94,22 @@ func MinecraftStack(scope constructs.Construct, id string) cdktf.TerraformStack 
 		SecurityGroupId: secgoup.Id(),
 	})
 
-	cloudInit, err := ioutil.ReadFile("../config/cloud-init.yaml")
+	cloudInit, err := os.ReadFile("../config/cloud-init.yaml")
 	if err != nil {
 		log.Fatal(err)
 	}
-	configpart := []*cloudinit.DataCloudinitConfigPart{{
+	configpart := []*datacloudinitconfig.DataCloudinitConfigPart{{
 		ContentType: jsii.String("text/cloud-config"),
 		Content:     jsii.String(string(cloudInit)),
 	}}
 
-	cloudinit := cloudinit.NewDataCloudinitConfig(stack, jsii.String("ubuntu-config"), &cloudinit.DataCloudinitConfigConfig{
+	cloudinit := datacloudinitconfig.NewDataCloudinitConfig(stack, jsii.String("ubuntu-config"), &datacloudinitconfig.DataCloudinitConfigConfig{
 		Gzip:         jsii.Bool(true),
 		Base64Encode: jsii.Bool(true),
 		Part:         &configpart,
 	})
 
-	activeImage := openstack.NewDataOpenstackImagesImageV2(stack, jsii.String("image"), &openstack.DataOpenstackImagesImageV2Config{
+	activeImage := dataopenstackimagesimagev2.NewDataOpenstackImagesImageV2(stack, jsii.String("image"), &dataopenstackimagesimagev2.DataOpenstackImagesImageV2Config{
 		Name: jsii.String("Ubuntu 20.04"),
 		Properties: &map[string]*string{
 			"Status": jsii.String("active"),
@@ -104,16 +117,16 @@ func MinecraftStack(scope constructs.Construct, id string) cdktf.TerraformStack 
 		//MostRecent: jsii.Bool(true),
 	})
 
-	vm := openstack.NewComputeInstanceV2(stack, jsii.String("vm"), &openstack.ComputeInstanceV2Config{
+	vm := computeinstancev2.NewComputeInstanceV2(stack, jsii.String("vm"), &computeinstancev2.ComputeInstanceV2Config{
 		Name:           jsii.String(fmt.Sprintf("%s-ubuntu", id)),
 		FlavorName:     jsii.String("c1.3"),
 		KeyPair:        keypair.Name(),
 		SecurityGroups: jsii.Strings("default", *secgoup.Name()),
 		UserData:       cloudinit.Rendered(),
-		Network: &[]*openstack.ComputeInstanceV2Network{
+		Network: &[]*computeinstancev2.ComputeInstanceV2Network{
 			{Name: network.Name()},
 		},
-		BlockDevice: &[]*openstack.ComputeInstanceV2BlockDevice{
+		BlockDevice: &[]*computeinstancev2.ComputeInstanceV2BlockDevice{
 			{
 				Uuid:                activeImage.Id(),
 				SourceType:          jsii.String("image"),
@@ -124,12 +137,10 @@ func MinecraftStack(scope constructs.Construct, id string) cdktf.TerraformStack 
 			},
 		},
 	})
-
-	fip := openstack.NewNetworkingFloatingipV2(stack, jsii.String("minecraft-fip"), &openstack.NetworkingFloatingipV2Config{
+	fip := networkingfloatingipv2.NewNetworkingFloatingipV2(stack, jsii.String("minecraft-fip"), &networkingfloatingipv2.NetworkingFloatingipV2Config{
 		Pool: jsii.String("floating-net"),
 	})
-
-	openstack.NewComputeFloatingipAssociateV2(stack, jsii.String("minecraft-fipa"), &openstack.ComputeFloatingipAssociateV2Config{
+	computefloatingipassociatev2.NewComputeFloatingipAssociateV2(stack, jsii.String("minecraft-fipa"), &computefloatingipassociatev2.ComputeFloatingipAssociateV2Config{
 		InstanceId: vm.Id(),
 		FloatingIp: fip.Address(),
 	})

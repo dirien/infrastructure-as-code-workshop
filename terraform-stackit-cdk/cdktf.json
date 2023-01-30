@@ -3,8 +3,8 @@
   "app": "go run main.go",
   "codeMakerOutput": "generated",
   "terraformProviders": [
-    "terraform-provider-openstack/openstack@~> 1.44.0",
-    "hashicorp/local@~> 2.1.0",
+    "terraform-provider-openstack/openstack@~> 1.49.0",
+    "hashicorp/local@~> 2.3.0",
     "hashicorp/cloudinit@~> 2.2.0"
   ],
   "terraformModules": [],
