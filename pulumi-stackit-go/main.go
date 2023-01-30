@@ -3,10 +3,11 @@ package main
 import (
 	"fmt"
 	"github.com/pulumi/pulumi-openstack/sdk/v3/go/openstack/compute"
+	"github.com/pulumi/pulumi-openstack/sdk/v3/go/openstack/images"
 	"github.com/pulumi/pulumi-openstack/sdk/v3/go/openstack/networking"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi/config"
-	"io/ioutil"
+	"os"
 )
 
 const (
@@ -19,7 +20,7 @@ func main() {
 
 		conf := config.New(ctx, "")
 
-		pubKeyFile, err := ioutil.ReadFile("../ssh/workshop.pub")
+		pubKeyFile, err := os.ReadFile("../ssh/workshop.pub")
 		if err != nil {
 			return err
 		}
@@ -107,7 +108,16 @@ func main() {
 			return err
 		}
 
-		userData, err := ioutil.ReadFile("../config/cloud-init.yaml")
+		userData, err := os.ReadFile("../config/cloud-init.yaml")
+		if err != nil {
+			return err
+		}
+
+		ids, err := images.GetImageIds(ctx, &images.GetImageIdsArgs{
+			Name:    pulumi.StringRef("Ubuntu 22.04"),
+			Sort:    pulumi.StringRef("updated_at"),
+			SizeMax: pulumi.IntRef(1),
+		})
 		if err != nil {
 			return err
 		}
@@ -127,7 +137,7 @@ func main() {
 			},
 			BlockDevices: compute.InstanceBlockDeviceArray{
 				&compute.InstanceBlockDeviceArgs{
-					Uuid:                pulumi.String(conf.Get("image-id")),
+					Uuid:                pulumi.String(ids.Ids[0]),
 					SourceType:          pulumi.String("image"),
 					BootIndex:           pulumi.Int(0),
 					DestinationType:     pulumi.String("volume"),

@@ -16,7 +16,7 @@ write_files:
       net.ipv4.conf.all.forwarding=1
   - path: /tmp/server.properties
     content: |
-      level-seed=stackitminecraftrocks
+      level-seed=minecraftrocks
       view-distance=10
       enable-jmx-monitoring=false
       server-ip=
@@ -82,14 +82,8 @@ runcmd:
   - iptables -I INPUT -j ACCEPT
   - mkdir /minecraft
   - ufw allow ssh
-  - ufw allow 5201
   - ufw allow proto tcp to 0.0.0.0/0 port 25565
-  - echo [DEFAULT] | sudo tee -a /etc/fail2ban/jail.local
-  - echo banaction = ufw | sudo tee -a /etc/fail2ban/jail.local
-  - echo [sshd] | sudo tee -a /etc/fail2ban/jail.local
-  - echo enabled = true | sudo tee -a /etc/fail2ban/jail.local
-  - sudo systemctl restart fail2ban
-  - URL=$(curl -s https://java-version.minectl.ediri.online/binary/1.18.1)
+  - URL=$(curl -s https://java-version.minectl.ediri.online/binary/1.18.2)
   - curl -sLSf $URL > /minecraft/server.jar
   - echo "eula=true" > /minecraft/eula.txt
   - mv /tmp/server.properties /minecraft/server.properties
