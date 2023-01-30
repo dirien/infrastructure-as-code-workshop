@@ -17,13 +17,13 @@ param customData string
 @description('The virtual network name to use for the resources.')
 param vnetName string
 
-resource nsg 'Microsoft.Network/networkSecurityGroups@2021-05-01' = {
+resource nsg 'Microsoft.Network/networkSecurityGroups@2022-07-01' = {
   name: '${computerName}-${uniqueString(resourceGroup().id)}-nsg'
   location: location
   tags: {
-    'app': 'minecraft'
-    'name': computerName
-    'resources': 'nsg'
+    app: 'minecraft'
+    name: computerName
+    resources: 'nsg'
   }
   properties: {
     securityRules: [
@@ -70,13 +70,13 @@ resource nsg 'Microsoft.Network/networkSecurityGroups@2021-05-01' = {
   }
 }
 
-resource publicIP 'Microsoft.Network/publicIPAddresses@2021-05-01' = {
+resource publicIP 'Microsoft.Network/publicIPAddresses@2022-07-01' = {
   name: '${computerName}-${uniqueString(resourceGroup().id)}-pip'
   location: location
   tags: {
-    'app': 'minecraft'
-    'name': computerName
-    'resources': 'publicIP'
+    app: 'minecraft'
+    name: computerName
+    resources: 'publicIP'
   }
   properties: {
     publicIPAllocationMethod: 'Static'
@@ -89,17 +89,17 @@ resource publicIP 'Microsoft.Network/publicIPAddresses@2021-05-01' = {
 
 output minecraftPublicIP string = publicIP.properties.ipAddress
 
-resource vnet 'Microsoft.Network/virtualNetworks@2021-05-01' existing = {
+resource vnet 'Microsoft.Network/virtualNetworks@2022-07-01' existing = {
   name: vnetName
 }
 
-resource nic 'Microsoft.Network/networkInterfaces@2021-05-01' = {
+resource nic 'Microsoft.Network/networkInterfaces@2022-07-01' = {
   name: '${computerName}-${uniqueString(resourceGroup().id)}-nic'
   location: location
   tags: {
-    'app': 'minecraft'
-    'name': computerName
-    'resources': 'nic'
+    app: 'minecraft'
+    name: computerName
+    resources: 'nic'
   }
   properties: {
     ipConfigurations: [
@@ -122,14 +122,14 @@ resource nic 'Microsoft.Network/networkInterfaces@2021-05-01' = {
   }
 }
 
-resource vm 'Microsoft.Compute/virtualMachines@2021-07-01' = {
+resource vm 'Microsoft.Compute/virtualMachines@2022-08-01' = {
   name: '${computerName}-${uniqueString(resourceGroup().id)}-vm'
   location: location
   tags: {
-    'app': 'minecraft'
-    'name': computerName
-    'vmSize': vmSize
-    'resources': 'virtualMachine'
+    app: 'minecraft'
+    name: computerName
+    vmSize: vmSize
+    resources: 'virtualMachine'
   }
   properties: {
     hardwareProfile: {

@@ -104,12 +104,12 @@ param accessPolicies array = [
   }
 ]
 
-resource keyvault 'Microsoft.KeyVault/vaults@2019-09-01' = {
+resource keyvault 'Microsoft.KeyVault/vaults@2022-07-01' = {
   name: 'keyvaul-${uniqueString(resourceGroup().id)}'
   location: location
   tags: {
-    'app': 'minecraft'
-    'resources': 'keyvault'
+    app: 'minecraft'
+    resources: 'keyvault'
   }
   properties: {
     enabledForDeployment: true
@@ -128,11 +128,11 @@ resource keyvault 'Microsoft.KeyVault/vaults@2019-09-01' = {
   }
 }
 
-resource secret 'Microsoft.KeyVault/vaults/secrets@2018-02-14' = {
+resource secret 'Microsoft.KeyVault/vaults/secrets@2022-07-01' = {
   name: '${keyvault.name}/ssh'
   tags: {
-    'app': 'minecraft'
-    'resources': 'secret'
+    app: 'minecraft'
+    resources: 'secret'
   }
   properties: {
     value: sshKey

@@ -6,6 +6,7 @@ param userId string
 module minecraftVault 'modules/keyvault.bicep' = {
   name: 'minecraft-vault'
   params: {
+    location: location
     serviceAccountObjectID: objectId
     currentUserObjectId: userId
     sshKey: loadTextContent('../ssh/workshop')
