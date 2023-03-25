@@ -8,7 +8,7 @@ var addressPrefix = '10.0.0.0/8'
 @description('The address prefixes of the subnets to create.')
 var subnetAddressPrefix = '10.0.0.0/16'
 
-resource vnet 'Microsoft.Network/virtualNetworks@2022-07-01' = {
+resource vnet 'Microsoft.Network/virtualNetworks@2022-09-01' = {
   name: 'vnet-${uniqueString(resourceGroup().id)}'
   location: location
   tags: {
