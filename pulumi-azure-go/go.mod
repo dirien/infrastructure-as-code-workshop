@@ -3,10 +3,10 @@ module pulumi-azure-go
 go 1.19
 
 require (
-	github.com/pulumi/pulumi-azure-native-sdk/compute v1.96.0
-	github.com/pulumi/pulumi-azure-native-sdk/network v1.96.0
-	github.com/pulumi/pulumi-azure-native-sdk/resources v1.96.0
-	github.com/pulumi/pulumi/sdk/v3 v3.57.1
+	github.com/pulumi/pulumi-azure-native-sdk/compute v1.98.1
+	github.com/pulumi/pulumi-azure-native-sdk/network v1.98.1
+	github.com/pulumi/pulumi-azure-native-sdk/resources v1.98.1
+	github.com/pulumi/pulumi/sdk/v3 v3.59.1
 )
 
 require (

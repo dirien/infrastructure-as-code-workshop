@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/pulumi/pulumi-azure-native/sdk v1.93.0
-	github.com/pulumi/pulumi/sdk/v3 v3.57.1
+	github.com/pulumi/pulumi/sdk/v3 v3.59.1
 )
 
 require (
