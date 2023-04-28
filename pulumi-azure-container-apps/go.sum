@@ -109,8 +109,8 @@ github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZb
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/pulumi/pulumi-azure-native/sdk v1.93.0 h1:8vj8O3ZQ24SF9QT5wV76KWh3DOM5jTwKYoEy4TYX5FE=
 github.com/pulumi/pulumi-azure-native/sdk v1.93.0/go.mod h1:lCTXVgZKSgw5n+CMW9iBmiTcwVgQJ8nwGLmPZedj578=
-github.com/pulumi/pulumi/sdk/v3 v3.64.0 h1:38y/6FLYZihLf2dnjw2L9g46h/6p+jOKKlmEYjL81+c=
-github.com/pulumi/pulumi/sdk/v3 v3.64.0/go.mod h1:Pb5H3OaRZg0n4TRIfY0pagR/NBIEvjp3lZe2Spr6Umc=
+github.com/pulumi/pulumi/sdk/v3 v3.65.1 h1:cF8n1PLqJ7O6Fj/E015XzLAixaeL3I52BvguAdlRn88=
+github.com/pulumi/pulumi/sdk/v3 v3.65.1/go.mod h1:hK2uQnf2SwwvCcaAco3l9+g5mGOkRfR7uqUaZpY/fD8=
 github.com/rivo/uniseg v0.2.0 h1:S1pD9weZBuJdFmowNwbpi7BJ8TNftyUImj/0WQi72jY=
 github.com/rivo/uniseg v0.2.0/go.mod h1:J6wj4VEh+S6ZtnVlnTBMWIodfgj8LQOQFoIToxlJtxc=
 github.com/rogpeppe/go-internal v1.9.0 h1:73kH8U+JUqXU8lRuOHeVHaa/SZPifC7BkcraZVejAe8=
