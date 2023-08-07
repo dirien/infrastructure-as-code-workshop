@@ -17,7 +17,7 @@ param customData string
 @description('The virtual network name to use for the resources.')
 param vnetName string
 
-resource nsg 'Microsoft.Network/networkSecurityGroups@2023-02-01' = {
+resource nsg 'Microsoft.Network/networkSecurityGroups@2023-04-01' = {
   name: '${computerName}-${uniqueString(resourceGroup().id)}-nsg'
   location: location
   tags: {
@@ -70,7 +70,7 @@ resource nsg 'Microsoft.Network/networkSecurityGroups@2023-02-01' = {
   }
 }
 
-resource publicIP 'Microsoft.Network/publicIPAddresses@2023-02-01' = {
+resource publicIP 'Microsoft.Network/publicIPAddresses@2023-04-01' = {
   name: '${computerName}-${uniqueString(resourceGroup().id)}-pip'
   location: location
   tags: {
@@ -89,11 +89,11 @@ resource publicIP 'Microsoft.Network/publicIPAddresses@2023-02-01' = {
 
 output minecraftPublicIP string = publicIP.properties.ipAddress
 
-resource vnet 'Microsoft.Network/virtualNetworks@2023-02-01' existing = {
+resource vnet 'Microsoft.Network/virtualNetworks@2023-04-01' existing = {
   name: vnetName
 }
 
-resource nic 'Microsoft.Network/networkInterfaces@2023-02-01' = {
+resource nic 'Microsoft.Network/networkInterfaces@2023-04-01' = {
   name: '${computerName}-${uniqueString(resourceGroup().id)}-nic'
   location: location
   tags: {
