@@ -3,8 +3,8 @@ module pulumi-kubernetes-operator
 go 1.19
 
 require (
-	github.com/pulumi/pulumi-kubernetes/sdk/v4 v4.2.0
-	github.com/pulumi/pulumi/sdk/v3 v3.83.0
+	github.com/pulumi/pulumi-kubernetes/sdk/v4 v4.3.0
+	github.com/pulumi/pulumi/sdk/v3 v3.86.0
 )
 
 require (

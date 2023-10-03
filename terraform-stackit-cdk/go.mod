@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/aws/constructs-go/constructs/v10 v10.2.70
-	github.com/aws/jsii-runtime-go v1.88.0
+	github.com/aws/jsii-runtime-go v1.89.0
 	github.com/hashicorp/terraform-cdk-go/cdktf v0.18.0
 )
 
