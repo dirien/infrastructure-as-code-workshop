@@ -104,7 +104,7 @@ param accessPolicies array = [
   }
 ]
 
-resource keyvault 'Microsoft.KeyVault/vaults@2023-02-01' = {
+resource keyvault 'Microsoft.KeyVault/vaults@2023-07-01' = {
   name: 'keyvaul-${uniqueString(resourceGroup().id)}'
   location: location
   tags: {
@@ -128,7 +128,7 @@ resource keyvault 'Microsoft.KeyVault/vaults@2023-02-01' = {
   }
 }
 
-resource secret 'Microsoft.KeyVault/vaults/secrets@2023-02-01' = {
+resource secret 'Microsoft.KeyVault/vaults/secrets@2023-07-01' = {
   name: '${keyvault.name}/ssh'
   tags: {
     app: 'minecraft'
