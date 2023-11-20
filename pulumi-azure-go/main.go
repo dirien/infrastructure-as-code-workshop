@@ -2,9 +2,9 @@ package main
 
 import (
 	"encoding/base64"
-	compute "github.com/pulumi/pulumi-azure-native-sdk/compute/v20220801"
-	network "github.com/pulumi/pulumi-azure-native-sdk/network/v20220701"
-	resources "github.com/pulumi/pulumi-azure-native-sdk/resources/v20220901"
+	compute "github.com/pulumi/pulumi-azure-native-sdk/compute/v2/v20230701"
+	network "github.com/pulumi/pulumi-azure-native-sdk/network/v2/v20230601"
+	resources "github.com/pulumi/pulumi-azure-native-sdk/resources/v2/v20230701"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi/config"
 	"io/ioutil"

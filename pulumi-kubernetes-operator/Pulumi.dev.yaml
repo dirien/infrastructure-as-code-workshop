@@ -1,9 +1,6 @@
 config:
-  pulumi-kubernetes-operator:armClientID:
-    secure: <>
-  pulumi-kubernetes-operator:armClientSecret:
-    secure: <>
-  pulumi-kubernetes-operator:armSubscriptionID: <>
-  pulumi-kubernetes-operator:armTenantID: <>
-  pulumi-kubernetes-operator:pulumiAccessToken:
-    secure: <>
+  pulumi-kubernetes-operator:armClientID: x
+  pulumi-kubernetes-operator:armClientSecret: y
+  pulumi-kubernetes-operator:armSubscriptionID: y
+  pulumi-kubernetes-operator:armTenantID: y
+  pulumi-kubernetes-operator:pulumiAccessToken: d

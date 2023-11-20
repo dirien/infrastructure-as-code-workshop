@@ -8,7 +8,6 @@ terraform {
 }
 
 provider "google" {
-  project = "minectl-fn"
   region  = var.region
   zone    = var.zone
 }
