@@ -3,11 +3,16 @@ data "google_compute_image" "minecraft-ubuntu" {
   project = "ubuntu-os-cloud"
 }
 
+data "google_project" "project" {
+  project_id = "331154168162"
+}
+
 data "google_service_account" "minecraft-sa" {
-  project    = data.google_project.project.id
-  account_id = "110246453965025503223"
+  project    = data.google_project.project.project_id
+  account_id = "minctl@minectl-fn.iam.gserviceaccount.com"
 }
 
 data "google_compute_network" "default" {
   name = "default"
+  project = data.google_project.project.project_id
 }

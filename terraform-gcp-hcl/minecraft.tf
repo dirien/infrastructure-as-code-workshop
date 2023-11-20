@@ -1,14 +1,13 @@
-data "google_project" "project" {
-}
-
 resource "google_compute_address" "minecraft-static-ip" {
-  name = "ipv4-address"
+  name    = "ipv4-address"
+  project = data.google_project.project.project_id
 }
 
 
 resource "google_compute_firewall" "minecraft-fw" {
   name    = "minecraft-fw"
   network = data.google_compute_network.default.name
+  project = data.google_project.project.project_id
 
   allow {
     protocol = "tcp"
@@ -17,13 +16,13 @@ resource "google_compute_firewall" "minecraft-fw" {
   source_ranges = [
     "0.0.0.0/0"
   ]
-  direction     = "INGRESS"
+  direction = "INGRESS"
 }
 
 resource "google_compute_instance" "minecraft-server" {
   name         = var.name
   machine_type = var.machine_type
-
+  project      = data.google_project.project.project_id
 
   boot_disk {
     initialize_params {
