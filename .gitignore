@@ -35,3 +35,6 @@ override.tf.json
 **/cdktf.out/
 **/.terraform.lock.hcl
 **/azure.json
+**/*.xpkg
+**/aws-provider.yaml
+**/do-provider.yaml

@@ -1,0 +1,16 @@
+apiVersion: ediri.io/v1alpha1
+kind: MinecraftServerClaim
+metadata:
+  name: minecraft-server-1
+spec:
+  compositionSelector:
+    matchLabels:
+      environment: production
+  resourceConfig:
+    region: europe
+  server:
+    size: large
+    ssh:
+      publicKey: |
+        ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDp7SDil2G9tTt0WqVWcW0YepoFwbg/aK/+Ap0Es0OTawVi9BKjmNRVodUZc4ZIAhtiq89ynLi2bwt3/9Y1xLj+flO7t/A8EIm84oYw3mQw96PR6IYitD0nVEa4zNhwbtAqE0gEBMWstcjzlB0mxeldCzlcWTLfzghGYAlA4uGPzJUYPh21yUWsnJEOLpt8OpgbSFDJNUGH4GPPxTHsuIbebM/lr2WCEFytn66rs4/UNKJXXUsYNrMKtOfxQBKO9wj7ArH034GjYjo2/P2LyAJc4vReYgUIAQjltFjR91sT4nCrEYLPKAwgCIBQsOhNAz1q6GEqzkVV+FhyzrA2kb7Yx/dlS1FIkwBLnhVuDEQXRFUk29K4c7zTNYQKP7s+Fthv7x7QteShE1gV9g9HybZJHuoDKziAqW9QOqLYIFuWofsxnYXccQ3fAPpbilP+14Sy5We0EVVnLCWFGpwQGVRR82yx/S61+3He0x3BsdNuUj4VBSfxYVeljfj0Q60t/6s=
+      

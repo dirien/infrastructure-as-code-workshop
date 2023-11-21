@@ -1,0 +1,288 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: minecraftcompositions-do.ediri.io
+  labels:
+    provider: do
+    environment: pre-production
+spec:
+  compositeTypeRef:
+    apiVersion: ediri.io/v1alpha1
+    kind: MinecraftServer
+  resources:
+  - name: MinecraftDroplet
+    base:
+      apiVersion: compute.do.crossplane.io/v1alpha1
+      kind: Droplet
+      spec:
+        forProvider:
+          image: ubuntu-22-04-x64
+          ipv6: false
+          monitoring: false
+    patches:
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.server.size
+      toFieldPath: spec.forProvider.size
+      transforms:
+      - map:
+          large: s-4vcpu-8gb
+          medium: s-2vcpu-4gb
+          small: s-2vcpu-2gb
+        type: map
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.server.userdata
+      toFieldPath: spec.forProvider.userData
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.resourceConfig.region
+      toFieldPath: spec.forProvider.region
+      transforms:
+      - map:
+          usa: nyc1
+          europe: fra1
+          asia: sgp1
+        type: map
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.server.ssh.publicKey
+      toFieldPath: spec.forProvider.sshKeys[0]
+    - type: ToCompositeFieldPath
+      fromFieldPath: status.atProvider.publicIPv4
+      toFieldPath: status.ip
+---
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: minecraftcompositions-aws.ediri.io
+  labels:
+    provider: aws
+    environment: production
+spec:
+  compositeTypeRef:
+    apiVersion: ediri.io/v1alpha1
+    kind: MinecraftServer
+  patchSets:
+  - name: resource-patch-set
+    patches:
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.resourceConfig.region
+      toFieldPath: spec.forProvider.region
+      transforms:
+      - map:
+          usa: us-east-2
+          europe: eu-central-1
+          asia: ap-southeast-1
+        type: map
+  resources:
+  - name: MinecraftVPC
+    base:
+      apiVersion: ec2.aws.upbound.io/v1beta1
+      kind: VPC
+      spec:
+        forProvider:
+          cidrBlock: 10.0.0.0/16
+          enableDnsHostnames: true
+          enableDnsSupport: true
+    patches:
+    - type: PatchSet
+      patchSetName: resource-patch-set
+  - name: MinecraftSubnet
+    base:
+      apiVersion: ec2.aws.upbound.io/v1beta1
+      kind: Subnet
+      spec:
+        forProvider:
+          vpcIdSelector:
+            matchControllerRef: true
+          cidrBlock: 10.0.48.0/20
+          availabilityZone: eu-central-1a
+          mapPublicIpOnLaunch: true
+    patches:
+    - type: PatchSet
+      patchSetName: resource-patch-set
+  - name: MinecraftInternetGateway
+    base:
+      apiVersion: ec2.aws.upbound.io/v1beta1
+      kind: InternetGateway
+      spec:
+        forProvider:
+          vpcIdSelector:
+            matchControllerRef: true
+    patches:
+    - type: PatchSet
+      patchSetName: resource-patch-set
+  - name: MinecraftRouteTable
+    base:
+      apiVersion: ec2.aws.upbound.io/v1beta1
+      kind: RouteTable
+      spec:
+        forProvider:
+          vpcIdSelector:
+            matchControllerRef: true
+    patches:
+    - type: PatchSet
+      patchSetName: resource-patch-set
+  - name: MinecraftRoute
+    base:
+      apiVersion: ec2.aws.upbound.io/v1beta1
+      kind: Route
+      spec:
+        forProvider:
+          routeTableIdSelector:
+            matchControllerRef: true
+          destinationCidrBlock: 0.0.0.0/0
+          gatewayIdSelector:
+            matchControllerRef: true
+    patches:
+    - type: PatchSet
+      patchSetName: resource-patch-set
+  - name: MinecraftRouteTableAssociation
+    base:
+      apiVersion: ec2.aws.upbound.io/v1beta1
+      kind: RouteTableAssociation
+      spec:
+        forProvider:
+          routeTableIdSelector:
+            matchControllerRef: true
+          subnetIdSelector:
+            matchControllerRef: true
+    patches:
+    - type: PatchSet
+      patchSetName: resource-patch-set
+  - name: MinecraftSecurityGroup
+    base:
+      apiVersion: ec2.aws.upbound.io/v1beta1
+      kind: SecurityGroup
+      spec:
+        forProvider:
+          vpcIdSelector:
+            matchControllerRef: true
+    patches:
+    - type: PatchSet
+      patchSetName: resource-patch-set
+    - type: FromCompositeFieldPath
+      fromFieldPath: metadata.name
+      toFieldPath: spec.forProvider.description
+      transforms:
+      - type: string
+        string:
+          type: Format
+          fmt: "Minecraft Server Security Group for %s"
+  - name: MinecraftSecurityGroupRuleMinecraft
+    base:
+      apiVersion: ec2.aws.upbound.io/v1beta1
+      kind: SecurityGroupIngressRule
+      spec:
+        forProvider:
+          securityGroupIdSelector:
+            matchControllerRef: true
+          type: ingress
+          ipProtocol: "tcp"
+          cidrIpv4: 0.0.0.0/0
+          description: Minecraft
+    patches:
+    - type: PatchSet
+      patchSetName: resource-patch-set
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.server.port
+      toFieldPath: spec.forProvider.fromPort
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.server.port
+      toFieldPath: spec.forProvider.toPort
+  - name: MinecraftSecurityGroupRuleSSH
+    base:
+      apiVersion: ec2.aws.upbound.io/v1beta1
+      kind: SecurityGroupIngressRule
+      spec:
+        forProvider:
+          securityGroupIdSelector:
+            matchControllerRef: true
+          type: ingress
+          ipProtocol: "tcp"
+          cidrIpv4: 0.0.0.0/0
+          description: SSH
+    patches:
+    - type: PatchSet
+      patchSetName: resource-patch-set
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.server.ssh.port
+      toFieldPath: spec.forProvider.fromPort
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.server.ssh.port
+      toFieldPath: spec.forProvider.toPort
+  - name: MinecraftSecurityGroupRuleSAllOutbound
+    base:
+      apiVersion: ec2.aws.upbound.io/v1beta1
+      kind: SecurityGroupEgressRule
+      spec:
+        forProvider:
+          securityGroupIdSelector:
+            matchControllerRef: true
+          type: egress
+          fromPort: 0
+          toPort: 0
+          ipProtocol: "-1"
+          cidrIpv4: 0.0.0.0/0
+          description: All outbound
+    patches:
+    - type: PatchSet
+      patchSetName: resource-patch-set
+  - name: MinecraftKeyPair
+    base:
+      apiVersion: ec2.aws.upbound.io/v1beta1
+      kind: KeyPair
+    patches:
+    - type: PatchSet
+      patchSetName: resource-patch-set
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.server.ssh.publicKey
+      toFieldPath: spec.forProvider.publicKey
+    - type: FromCompositeFieldPath
+      fromFieldPath: metadata.name
+      toFieldPath: metadata.name
+      transforms:
+      - type: string
+        string:
+          type: Convert
+          convert: ToLower
+  - name: MinecraftInstance
+    base:
+      apiVersion: ec2.aws.upbound.io/v1beta1
+      kind: Instance
+      spec:
+        forProvider:
+          ebsOptimized: false
+          ami: ami-0b8458c6081a51fd1
+          subnetIdSelector:
+            matchControllerRef: true
+          vpcSecurityGroupIdSelector:
+            matchControllerRef: true
+    patches:
+    - type: PatchSet
+      patchSetName: resource-patch-set
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.server.size
+      toFieldPath: spec.forProvider.instanceType
+      transforms:
+      - map:
+          large: t3.large
+          medium: t3.medium
+          small: t3.small
+        type: map
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.server.userdata
+      toFieldPath: spec.forProvider.userDataBase64
+      transforms:
+      - type: string
+        string:
+          type: Convert
+          convert: ToBase64
+    - type: FromCompositeFieldPath
+      fromFieldPath: metadata.name
+      toFieldPath: spec.forProvider.keyName
+      transforms:
+      - type: string
+        string:
+          type: Convert
+          convert: ToLower
+    - type: ToCompositeFieldPath
+      fromFieldPath: status.atProvider.publicIp
+      toFieldPath: status.ip

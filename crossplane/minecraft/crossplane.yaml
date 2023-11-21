@@ -1,0 +1,12 @@
+apiVersion: meta.pkg.crossplane.io/v1
+kind: Configuration
+metadata:
+  name: crossplane-minecraft
+spec:
+  crossplane:
+    version: ">=v1.14.0"
+  dependsOn:
+  - provider: xpkg.upbound.io/upbound/provider-aws-ec2
+    version: ">=v0.44.0"
+  - provider: xpkg.upbound.io/digitalocean/provider-digitalocean
+    version: ">=v0.2.0"
