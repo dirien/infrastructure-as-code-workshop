@@ -1,0 +1,11 @@
+apiVersion: do.crossplane.io/v1alpha1
+kind: ProviderConfig
+metadata:
+  name: default
+spec:
+  credentials:
+    secretRef:
+      key: DIGITALOCEAN_TOKEN
+      name: do-creds
+      namespace: crossplane-system
+    source: Secret

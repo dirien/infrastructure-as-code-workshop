@@ -1,0 +1,9 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- crossplane-minecraft-provider.yaml
+#- aws-provider.yaml
+- aws-provider-config.yaml
+#- do-provider.yaml
+- do-provider-config.yaml

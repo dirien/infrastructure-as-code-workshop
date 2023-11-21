@@ -1,0 +1,6 @@
+apiVersion: pkg.crossplane.io/v1
+kind: Configuration
+metadata:
+  name: crossplane-minecraft-provider
+spec:
+    package: index.docker.io/dirien/crossplane-minecraft:v0.1.6

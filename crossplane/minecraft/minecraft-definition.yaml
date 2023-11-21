@@ -1,0 +1,123 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: CompositeResourceDefinition
+metadata:
+  name: minecraftservers.ediri.io
+spec:
+  group: ediri.io
+  names:
+    kind: MinecraftServer
+    plural: minecraftservers
+  claimNames:
+    kind: MinecraftServerClaim
+    plural: minecraftserverclaims
+  versions:
+  - name: v1alpha1
+    served: true
+    referenceable: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              server:
+                type: object
+                description: Server of the MinecraftServer
+                properties:
+                  ssh:
+                    type: object
+                    description: Ssh of the MinecraftServer
+                    properties:
+                      publicKey:
+                        type: string
+                        description: PublicKey of the MinecraftServer
+                      port:
+                        type: integer
+                        description: Port of the MinecraftServer
+                        default: 22
+                    required:
+                    - publicKey
+                  size:
+                    type: string
+                    description: Size of the MinecraftServer (large, medium, small)
+                  port:
+                    type: integer
+                    description: Port of the MinecraftServer
+                    default: 25565
+                  userdata:
+                    type: string
+                    description: Userdata of the MinecraftServer
+                    default: |
+                      #cloud-config
+                      users:
+                      - default
+                      
+                      package_update: true
+                      
+                      packages:
+                      - apt-transport-https
+                      - ca-certificates
+                      - curl
+                      - openjdk-17-jre-headless
+                      
+                      write_files:
+                      - path: /etc/sysctl.d/enabled_ipv4_forwarding.conf
+                        content: |
+                          net.ipv4.conf.all.forwarding=1
+                      - path: /etc/systemd/system/minecraft.service
+                        content: |
+                          [Unit]
+                          Description=Minecraft Server
+                          Documentation=https://www.minecraft.net/en-us/download/server
+                      
+                          [Service]
+                          WorkingDirectory=/minecraft
+                          Type=simple
+                          ExecStart=/usr/bin/java -Xmx2G -Xms2G -jar server.jar nogui
+                          Restart=on-failure
+                          RestartSec=5
+                      
+                          [Install]
+                          WantedBy=multi-user.target
+                      runcmd:
+                      - mkdir -p /minecraft
+                      - URL=$(curl -s https://java-version.minectl.ediri.online/latest)
+                      - curl -sLSf $URL > /minecraft/server.jar
+                      - systemctl enable minecraft.service
+                      - systemctl start minecraft.service
+                      - sleep 1m
+                      - echo "eula=true" > /minecraft/eula.txt
+                      - sed -ir "s/^[#]*\s*max-players=.*/max-players=100/" /minecraft/server.properties
+                      - sed -ir "s/^[#]*\s*motd=.*/motd=Crossplane Minecraft/" /minecraft/server.properties
+                      - sed -ir "s/^[#]*\s*difficulty=.*/difficulty=normal:q/" /minecraft/server.properties
+                      - sed -ir "s/^[#]*\s*level-seed=.*/level-seed=crossplane/" /minecraft/server.properties
+                      - systemctl restart minecraft.service
+                      - systemctl enable minecraft.service
+
+                required:
+                - ssh
+                - size
+              resourceConfig:
+                type: object
+                description: ResourceConfig of the MinecraftServer
+                properties:
+                  region:
+                    type: string
+                    description: Region of the MinecraftServer (usa, europe, asia)
+                required:
+                - region
+            required:
+            - resourceConfig
+            - server
+          status:
+            type: object
+            properties:
+              ip:
+                type: string
+                description: Ip of the MinecraftServer
+    additionalPrinterColumns:
+    - name: Ip
+      type: string
+      description: The Public IP of the MinecraftServer instance.
+      jsonPath: .status.ip

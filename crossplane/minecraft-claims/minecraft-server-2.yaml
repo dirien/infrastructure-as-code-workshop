@@ -1,0 +1,14 @@
+apiVersion: ediri.io/v1alpha1
+kind: MinecraftServerClaim
+metadata:
+  name: minecraft-server-2
+spec:
+  compositionSelector:
+    matchLabels:
+      environment: pre-production
+  resourceConfig:
+    region: usa
+  server:
+    size: large
+    ssh: # The digitalocean crossplane provider does not support ssh keys yet, you need to upload the key manually and copy&paste the fingerprint here
+      publicKey: ee:e3:f8:ff:2b:b1:69:ef:84:d4:ec:cc:e8:0f:42:7c
