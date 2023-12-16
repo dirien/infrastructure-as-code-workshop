@@ -4,11 +4,11 @@ param location string = 'westeurope'
 @description('The virtual network name to use for the resources.')
 param vnetName string
 
-resource vnet 'Microsoft.Network/virtualNetworks@2023-05-01' existing = {
+resource vnet 'Microsoft.Network/virtualNetworks@2023-06-01' existing = {
   name: vnetName
 }
 
-resource publicIp 'Microsoft.Network/publicIPAddresses@2023-05-01' = {
+resource publicIp 'Microsoft.Network/publicIPAddresses@2023-06-01' = {
   name: 'bastion-${uniqueString(resourceGroup().id)}-pip'
   location: location
   tags: {
@@ -24,7 +24,7 @@ resource publicIp 'Microsoft.Network/publicIPAddresses@2023-05-01' = {
   }
 }
 
-resource bastionHost 'Microsoft.Network/bastionHosts@2023-05-01' = {
+resource bastionHost 'Microsoft.Network/bastionHosts@2023-06-01' = {
   name: 'bastion-${uniqueString(resourceGroup().id)}-bh'
   location: location
   tags: {
