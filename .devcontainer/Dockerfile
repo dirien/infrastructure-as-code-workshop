@@ -1,4 +1,4 @@
-FROM  --platform=linux/amd64 pulumi/pulumi:3.113.3
+FROM  --platform=linux/amd64 pulumi/pulumi:3.114.0
 
 # Install pulumictl and set to PATH
 RUN curl -sL "https://raw.githubusercontent.com/crossplane/crossplane/master/install.sh" | sh && \
