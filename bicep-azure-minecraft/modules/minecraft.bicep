@@ -122,7 +122,7 @@ resource nic 'Microsoft.Network/networkInterfaces@2024-01-01' = {
   }
 }
 
-resource vm 'Microsoft.Compute/virtualMachines@2024-03-01' = {
+resource vm 'Microsoft.Compute/virtualMachines@2024-07-01' = {
   name: '${computerName}-${uniqueString(resourceGroup().id)}-vm'
   location: location
   tags: {
