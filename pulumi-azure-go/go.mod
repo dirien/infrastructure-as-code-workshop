@@ -3,14 +3,14 @@ module pulumi-azure-go
 go 1.21
 
 require (
-	github.com/pulumi/pulumi-azure-native-sdk/compute/v2 v2.58.0
+	github.com/pulumi/pulumi-azure-native-sdk/compute/v2 v2.67.0
 
 )
 
 require (
-	github.com/pulumi/pulumi-azure-native-sdk/network/v2 v2.58.0
-	github.com/pulumi/pulumi-azure-native-sdk/resources/v2 v2.58.0
-	github.com/pulumi/pulumi/sdk/v3 v3.129.0
+	github.com/pulumi/pulumi-azure-native-sdk/network/v2 v2.67.0
+	github.com/pulumi/pulumi-azure-native-sdk/resources/v2 v2.67.0
+	github.com/pulumi/pulumi/sdk/v3 v3.136.1
 )
 
 require (
@@ -65,7 +65,7 @@ require (
 	github.com/pkg/term v1.1.0 // indirect
 	github.com/pulumi/appdash v0.0.0-20231130102222-75f619a67231 // indirect
 	github.com/pulumi/esc v0.9.1 // indirect
-	github.com/pulumi/pulumi-azure-native-sdk/v2 v2.58.0 // indirect
+	github.com/pulumi/pulumi-azure-native-sdk/v2 v2.67.0 // indirect
 	github.com/rivo/uniseg v0.4.4 // indirect
 	github.com/rogpeppe/go-internal v1.11.0 // indirect
 	github.com/sabhiram/go-gitignore v0.0.0-20210923224102-525f6e181f06 // indirect
@@ -76,7 +76,6 @@ require (
 	github.com/spf13/cobra v1.7.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/texttheater/golang-levenshtein v1.0.1 // indirect
-	github.com/tweekmonster/luser v0.0.0-20161003172636-3fa38070dbd7 // indirect
 	github.com/uber/jaeger-client-go v2.30.0+incompatible // indirect
 	github.com/uber/jaeger-lib v2.4.1+incompatible // indirect
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
