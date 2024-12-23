@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/pulumi/pulumi-openstack/sdk/v4/go/openstack/compute"
-	"github.com/pulumi/pulumi-openstack/sdk/v4/go/openstack/images"
-	"github.com/pulumi/pulumi-openstack/sdk/v4/go/openstack/networking"
+	"github.com/pulumi/pulumi-openstack/sdk/v5/go/openstack/compute"
+	"github.com/pulumi/pulumi-openstack/sdk/v5/go/openstack/images"
+	"github.com/pulumi/pulumi-openstack/sdk/v5/go/openstack/networking"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi/config"
 	"os"
