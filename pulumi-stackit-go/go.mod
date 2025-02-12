@@ -2,11 +2,11 @@ module pulumi-stackit-go
 
 go 1.22
 
-toolchain go1.23.6
+toolchain go1.24.0
 
 require (
-	github.com/pulumi/pulumi-openstack/sdk/v5 v5.0.2
-	github.com/pulumi/pulumi/sdk/v3 v3.143.0
+	github.com/pulumi/pulumi-openstack/sdk/v5 v5.0.3
+	github.com/pulumi/pulumi/sdk/v3 v3.150.0
 
 )
 
