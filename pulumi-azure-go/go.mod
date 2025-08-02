@@ -5,14 +5,14 @@ go 1.22
 toolchain go1.24.5
 
 require (
-	github.com/pulumi/pulumi-azure-native-sdk/compute/v3 v3.5.1
+	github.com/pulumi/pulumi-azure-native-sdk/compute/v3 v3.6.1
 
 )
 
 require (
-	github.com/pulumi/pulumi-azure-native-sdk/network/v3 v3.5.1
-	github.com/pulumi/pulumi-azure-native-sdk/resources/v3 v3.5.1
-	github.com/pulumi/pulumi/sdk/v3 v3.186.0
+	github.com/pulumi/pulumi-azure-native-sdk/network/v3 v3.6.1
+	github.com/pulumi/pulumi-azure-native-sdk/resources/v3 v3.6.1
+	github.com/pulumi/pulumi/sdk/v3 v3.187.0
 )
 
 require (
